@@ -28,7 +28,7 @@
 #include "spmm_ell_device.cu.h"
 
 template <typename T>
-T maximum_relative_error(const T * A, const T * B, const size_t N)
+T maximum_relative_error(const T * A, const T * B, const size_t N, size_t NUMVECTORS)
 {
     T max_error = 0;
     float max_absolute_error;
@@ -62,6 +62,11 @@ void test_spmm_ell_kernel(const csr_matrix<IndexType,ValueType>& csr)
 
     printf("\n####  Testing ELL SpMM Kernel ####\n");
    
+    for (int NUMVECTORS=2; NUMVECTORS<=32; NUMVECTORS*=2){
+	for (int VECBLOCK=2; VECBLOCK<=NUMVECTORS; VECBLOCK*=2){
+
+
+
     const IndexType num_rows = csr.num_rows;
     const IndexType num_cols = csr.num_cols;
 
@@ -76,21 +81,7 @@ void test_spmm_ell_kernel(const csr_matrix<IndexType,ValueType>& csr)
     for(IndexType j = 0; j < NUMVECTORS ; j++)
 	    for(IndexType i = 0; i < num_rows; i++)
        	 y_host[j*num_rows+i] = rand() / (RAND_MAX + 1.0);
-/*////////////
-    printf("\nx vectors\n");
-    for(IndexType i = 0; i < num_cols; i++){
-    	for(IndexType j = 0; j < NUMVECTORS ; j++)
-       	printf("%f\t", x_host[j*num_cols+i]);
-	printf("\n");
-    } 
-    printf("\ny vectors\n");
-    for(IndexType i = 0; i < num_rows; i++){
-	    for(IndexType j = 0; j < NUMVECTORS ; j++)
-       	 printf("%f\t", y_host[j*num_rows+i]);
-	     printf("\n");
-    }
-
-  *///////////// 
+ 
    
     printf("Creating ELL_matrix.....\n");
     IndexType max_cols_per_row = static_cast<IndexType>( (3 * csr.num_nonzeros) / csr.num_rows + 1 );//khalid: equation is for dia
@@ -123,32 +114,15 @@ void test_spmm_ell_kernel(const csr_matrix<IndexType,ValueType>& csr)
    printf("done...\n");
    printf("Calling ELL kernel on device.....\n");
    //spmm_ell_device(sm2_loc2,  x_loc2, y_loc2);
-   spmm_ell_tex_device(sm2_loc2,  x_loc2, y_loc2);
+   //spmm_ell_tex_device(sm2_loc2,  x_loc2, y_loc2);
    printf("done...\n ");
 
    
    // transfer results to host
    ValueType * y_sm1_result = copy_array(y_loc1, num_rows*NUMVECTORS , HOST_MEMORY, HOST_MEMORY);
    ValueType * y_sm2_result = copy_array(y_loc2, num_rows*NUMVECTORS , DEVICE_MEMORY, HOST_MEMORY);
-/*////////////
-    printf("\ny vectors after multiplication using spmv\n");
-    for(IndexType i = 0; i < num_rows; i++){
-	    for(IndexType j = 0; j < NUMVECTORS ; j++)
-       	 printf("%f\t", y_sm1_result[j*num_rows+i]);
-	     printf("\n");
-    }
-	
-	  printf("\ny vectors after multiplication using spmv\n");
-    for(IndexType i = 0; i < num_rows; i++){
-	    for(IndexType j = 0; j < NUMVECTORS ; j++)
-       	 printf("%f\t", y_sm2_result[j*num_rows+i]);
-	     printf("\n");
-    }
 
-
-  
-*/////////////
-   ValueType max_error = maximum_relative_error(y_sm1_result, y_sm2_result, num_rows);
+   ValueType max_error = maximum_relative_error(y_sm1_result, y_sm2_result, num_rows, NUMVECTORS );
    printf("[max error %9f]", max_error);
     
     if ( max_error > 5 * std::sqrt( std::numeric_limits<ValueType>::epsilon() ) )
@@ -165,5 +139,10 @@ void test_spmm_ell_kernel(const csr_matrix<IndexType,ValueType>& csr)
     delete_array(y_loc2, DEVICE_MEMORY);
     delete_host_array(y_sm1_result);
     delete_host_array(y_sm2_result);
+
+
+
+}}
+
 }
 
