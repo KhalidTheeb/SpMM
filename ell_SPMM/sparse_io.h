@@ -146,4 +146,3 @@ csr_matrix<IndexType,ValueType> read_csr_matrix(const char * mm_filename, bool c
     return csr;
 }
 
-
