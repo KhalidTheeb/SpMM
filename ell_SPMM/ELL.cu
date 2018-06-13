@@ -27,13 +27,9 @@
 template <typename IndexType, typename ValueType>
 void test_ell_matrix_kernel(const csr_matrix<IndexType,ValueType>& csr)
 {
-
-   //Test the coorectness of ell kernel
-   test_spmm_ell_kernel<IndexType,ValueType>(csr);
-   
+ 
    //Test the performance of ell kernel
    benchmark_ell_on_device(csr, spmm_ell_device<IndexType, ValueType>,"ell");
-   benchmark_ell_on_device(csr, spmm_ell_device<IndexType, ValueType>,"ell_tex");
 
 }
 
