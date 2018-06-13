@@ -29,15 +29,15 @@ texture<int2,1>  tex_x_double;
 
 // Use int2 to pull doubles through texture cache
 void bind_x(const float * x)
-{   CUDA_SAFE_CALL(cudaBindTexture(NULL, tex_x_float, x));   }
+{   (cudaBindTexture(NULL, tex_x_float, x));   }
 
 void bind_x(const double * x)
-{   CUDA_SAFE_CALL(cudaBindTexture(NULL, tex_x_double, x));   }
+{   (cudaBindTexture(NULL, tex_x_double, x));   }
 
 void unbind_x(const float * x)
-{   CUDA_SAFE_CALL(cudaUnbindTexture(tex_x_float)); }
+{   (cudaUnbindTexture(tex_x_float)); }
 void unbind_x(const double * x)
-{   CUDA_SAFE_CALL(cudaUnbindTexture(tex_x_double)); }
+{   (cudaUnbindTexture(tex_x_double)); }
 // Note: x is unused, but distinguishes the two functions
 
 template <bool UseCache>
