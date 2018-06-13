@@ -20,30 +20,6 @@
 
 #include <stdlib.h>
 
-#ifdef __CUDACC__
-#include <cuda.h>
-#  define CUDA_SAFE_CALL_NO_SYNC( call) do {                                 \
-    cudaError err = call;                                                    \
-    if( cudaSuccess != err) {                                                \
-        fprintf(stderr, "Cuda error in file '%s' in line %i : %s.\n",        \
-                __FILE__, __LINE__, cudaGetErrorString( err) );              \
-        exit(EXIT_FAILURE);                                                  \
-    } } while (0)
-
-#  define CUDA_SAFE_CALL( call) do {                                         \
-    CUDA_SAFE_CALL_NO_SYNC(call);                                            \
-    cudaError err = cudaThreadSynchronize();                                 \
-    if( cudaSuccess != err) {                                                \
-        fprintf(stderr, "Cuda error in file '%s' in line %i : %s.\n",        \
-                __FILE__, __LINE__, cudaGetErrorString( err) );              \
-        exit(EXIT_FAILURE);                                                  \
-    } } while (0)
-
-#else
-// drop all CUDA calls
-#define CUDA_SAFE_CALL_NO_SYNC(x)
-#define CUDA_SAFE_CALL(x)
-#endif
 
 typedef struct row_len_str 
 {
@@ -66,7 +42,7 @@ T * new_array(const size_t N, const memory_location loc)
     }
     else{
         void * ptr = 0;
-        CUDA_SAFE_CALL(cudaMalloc(&ptr, sizeof(T)*N));
+        (cudaMalloc(&ptr, sizeof(T)*N));
         return static_cast<T*>(ptr);
     }
 }
@@ -79,7 +55,7 @@ void delete_array(T * p, const memory_location loc)
         free(p);
     }
     else {
-        CUDA_SAFE_CALL(cudaFree(p));
+        (cudaFree(p));
     };
 }
 
@@ -91,7 +67,7 @@ short int * new_array(const size_t N, const memory_location loc)
     }
     else{
         void * ptr = 0;
-        CUDA_SAFE_CALL(cudaMalloc(&ptr, sizeof(short int)*N));
+        (cudaMalloc(&ptr, sizeof(short int)*N));
         return static_cast<short int*>(ptr);
     }
 }
@@ -103,7 +79,7 @@ void delete_array(short int * p, const memory_location loc)
         free(p);
     }
     else {
-        CUDA_SAFE_CALL(cudaFree(p));
+        (cudaFree(p));
     };
 }
 
@@ -127,13 +103,13 @@ void memcpy_array(T * dst, const T * src, const size_t N,
                   const memory_location dst_loc)
 {
     if(src_loc == HOST_MEMORY   && dst_loc == HOST_MEMORY  )
-        CUDA_SAFE_CALL(cudaMemcpy(dst, src, sizeof(T)*N, cudaMemcpyHostToHost));
+        (cudaMemcpy(dst, src, sizeof(T)*N, cudaMemcpyHostToHost));
     if(src_loc == HOST_MEMORY   && dst_loc == DEVICE_MEMORY)
-        CUDA_SAFE_CALL(cudaMemcpy(dst, src, sizeof(T)*N, cudaMemcpyHostToDevice));
+        (cudaMemcpy(dst, src, sizeof(T)*N, cudaMemcpyHostToDevice));
     if(src_loc == DEVICE_MEMORY && dst_loc == HOST_MEMORY  )
-        CUDA_SAFE_CALL(cudaMemcpy(dst, src, sizeof(T)*N, cudaMemcpyDeviceToHost));
+        (cudaMemcpy(dst, src, sizeof(T)*N, cudaMemcpyDeviceToHost));
     if(src_loc == DEVICE_MEMORY && dst_loc == DEVICE_MEMORY)
-        CUDA_SAFE_CALL(cudaMemcpy(dst, src, sizeof(T)*N, cudaMemcpyDeviceToDevice));
+        (cudaMemcpy(dst, src, sizeof(T)*N, cudaMemcpyDeviceToDevice));
 }
 
 template<typename T>
