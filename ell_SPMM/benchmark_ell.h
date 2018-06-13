@@ -21,8 +21,6 @@
 
 #include "sparse_formats.h"
 #include "timer.h"
-
-char * BENCHMARK_OUTPUT_FILE_NAME = "benchmark_output.log";
  
 template <typename IndexType, typename ValueType>
 size_t bytes_per_spmv(const ell_matrix<IndexType,ValueType>& mtx)
@@ -42,6 +40,11 @@ template <typename IndexType, typename ValueType, typename SpMM>
 void benchmark_ell(const csr_matrix<IndexType,ValueType>& csr, SpMM spmm, const memory_location loc, const char * method_name, const size_t min_iterations = 1, const size_t max_iterations = 1000, const double seconds = 3.0)
 {
 
+
+    for (int NUMVECTORS=2; NUMVECTORS<=32; NUMVECTORS*=2){
+	//for (int VECBLOCK=8; VECBLOCK<=NUMVECTORS; VECBLOCK*=2){
+
+
     // initialize host vectors
     ValueType * x_host = new_host_array<ValueType>(csr.num_cols* NUMVECTORS);
 
@@ -59,7 +62,7 @@ void benchmark_ell(const csr_matrix<IndexType,ValueType>& csr, SpMM spmm, const 
     ValueType * x_loc = copy_array(x_host, csr.num_cols*NUMVECTORS , HOST_MEMORY, loc);
 
     printf("###   Testing the performance of SpMM using ELL   ###\n");
-    printf("Number of vectors %d\n", NUMVECTORS);
+    printf("Number of vectors %d    %d\n", NUMVECTORS, NUMVECTORS);//VECBLOCK);
     size_t num_iterations = max_iterations;
 
 	
@@ -73,7 +76,7 @@ void benchmark_ell(const csr_matrix<IndexType,ValueType>& csr, SpMM spmm, const 
 
     timer t;
     for(size_t i = 0; i < num_iterations; i++)
-        spmm(ell_device, x_loc, y_loc);
+        spmm(ell_device, x_loc, y_loc, NUMVECTORS, NUMVECTORS);//VECBLOCK);
     cudaThreadSynchronize();
     double msec_per_iteration = t.milliseconds_elapsed() / (double) num_iterations;
     double sec_per_iteration = msec_per_iteration / 1000.0;
@@ -96,6 +99,9 @@ void benchmark_ell(const csr_matrix<IndexType,ValueType>& csr, SpMM spmm, const 
     delete_host_array(x_host);
     delete_array(y_loc, loc);
     delete_array(x_loc, loc);
+
+//}
+}
 
 }
 
