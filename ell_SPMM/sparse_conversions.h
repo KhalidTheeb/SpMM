@@ -188,7 +188,6 @@ coo_matrix<IndexType, ValueType>
     return coo;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 //! Convert COO format to CSR format
 // Storage for output is assumed to have been allocated
