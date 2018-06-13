@@ -42,14 +42,12 @@ void benchmark_ell(const csr_matrix<IndexType,ValueType>& csr, SpMM spmm, const 
 
 
     for (int NUMVECTORS=2; NUMVECTORS<=32; NUMVECTORS*=2){
-	//for (int VECBLOCK=8; VECBLOCK<=NUMVECTORS; VECBLOCK*=2){
-
 
     // initialize host vectors
     ValueType * x_host = new_host_array<ValueType>(csr.num_cols* NUMVECTORS);
 
      for(IndexType j = 0; j < NUMVECTORS ; j++)
-	    for(IndexType i = 0; i < csr.num_cols; i++)
+	 for(IndexType i = 0; i < csr.num_cols; i++)
        	 x_host[j*csr.num_cols+i] = rand() / (RAND_MAX + 1.0);
 
     ValueType * y_host = new_host_array<ValueType>(csr.num_rows*NUMVECTORS);
@@ -62,11 +60,11 @@ void benchmark_ell(const csr_matrix<IndexType,ValueType>& csr, SpMM spmm, const 
     ValueType * x_loc = copy_array(x_host, csr.num_cols*NUMVECTORS , HOST_MEMORY, loc);
 
     printf("###   Testing the performance of SpMM using ELL   ###\n");
-    printf("Number of vectors %d    %d\n", NUMVECTORS, NUMVECTORS);//VECBLOCK);
+    printf("Number of dense vectors %d   \n", NUMVECTORS);
     size_t num_iterations = max_iterations;
 
 	
-    IndexType max_cols_per_row = static_cast<IndexType>( (3 * csr.num_nonzeros) / csr.num_rows + 1 );//khalid: equation is for dia
+    IndexType max_cols_per_row = static_cast<IndexType>( (3 * csr.num_nonzeros) / csr.num_rows + 1 );
     ell = csr_to_ell<IndexType,ValueType>(csr, max_cols_per_row);
     if (ell.num_nonzeros == 0 && csr.num_nonzeros != 0){
        return;
@@ -76,7 +74,7 @@ void benchmark_ell(const csr_matrix<IndexType,ValueType>& csr, SpMM spmm, const 
 
     timer t;
     for(size_t i = 0; i < num_iterations; i++)
-        spmm(ell_device, x_loc, y_loc, NUMVECTORS, NUMVECTORS);//VECBLOCK);
+        spmm(ell_device, x_loc, y_loc, NUMVECTORS, NUMVECTORS);
     cudaThreadSynchronize();
     double msec_per_iteration = t.milliseconds_elapsed() / (double) num_iterations;
     double sec_per_iteration = msec_per_iteration / 1000.0;
@@ -100,7 +98,6 @@ void benchmark_ell(const csr_matrix<IndexType,ValueType>& csr, SpMM spmm, const 
     delete_array(y_loc, loc);
     delete_array(x_loc, loc);
 
-//}
 }
 
 }
