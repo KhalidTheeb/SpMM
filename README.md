@@ -7,12 +7,12 @@ Related publication available here:
 http://ieeexplore.ieee.org/abstract/document/7056883/?reload=true
 
 
-## Compilation:
+## Compilation Command:
 ```
 nvcc ELL.cu mmio.c -o ell_SpMM
 ```
 
-## Sample Output:
+## Sample Output using CUDA/9.1 on V100 GPU:
 ```
 Using 64-bit floating point precision
 
