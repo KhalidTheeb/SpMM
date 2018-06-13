@@ -18,8 +18,6 @@
 
 #include "mem.h"
 
-#define NUMVECTORS 2
-#define VECBLOCK  2
 ////////////////////////////////////////////////////////////////////////////////
 //! Defines the following sparse matrix formats
 // ELL - ELLPACK/ITPACK
@@ -89,21 +87,6 @@ struct hyb_matrix : public matrix_shape<IndexType>
 };
 
 
-// Blocked JAgged Diagonal matrix
-template <typename IndexType, typename ValueType>
-struct btjad_matrix : public matrix_shape<IndexType> 
-{
-  typedef IndexType index_type;
-  typedef ValueType value_type;
-  
-  long unsigned size;
-  ValueType * value;
-  short int * row_index;
-  IndexType * jad_diag_start;
-  ValueType * x;
-  IndexType * perm_index;
-};
-
 ////////////////////////////////////////////////////////////////////////////////
 //! sparse matrix memory management 
 ////////////////////////////////////////////////////////////////////////////////
@@ -113,14 +96,6 @@ void delete_ell_matrix(ell_matrix<IndexType,ValueType>& ell, const memory_locati
     delete_array(ell.Aj, loc);  delete_array(ell.Ax, loc);
 }
 
-template <typename IndexType, typename ValueType>
-void delete_btjad_matrix(btjad_matrix<IndexType,ValueType>& btjad, const memory_location loc){
-    delete_array(btjad.value, loc);  delete_array(btjad.row_index, loc);
-    delete_array(btjad.x, loc); 
-    delete_array(btjad.perm_index, loc);
-    delete_array(btjad.jad_diag_start, loc);  
-   
-}
 template <typename IndexType, typename ValueType>
 void delete_csr_matrix(csr_matrix<IndexType,ValueType>& csr, const memory_location loc){
     delete_array(csr.Ap, loc);  delete_array(csr.Aj, loc);   delete_array(csr.Ax, loc);
@@ -144,9 +119,6 @@ template <typename IndexType, typename ValueType>
 void delete_host_matrix(ell_matrix<IndexType,ValueType>& ell){ delete_ell_matrix(ell, HOST_MEMORY); }
 
 template <typename IndexType, typename ValueType>
-void delete_host_matrix(btjad_matrix<IndexType,ValueType>& btjad){ delete_btjad_matrix(btjad, HOST_MEMORY); }
-
-template <typename IndexType, typename ValueType>
 void delete_host_matrix(csr_matrix<IndexType,ValueType>& csr){ delete_csr_matrix(csr, HOST_MEMORY); }
 
 template <typename IndexType, typename ValueType>
@@ -162,9 +134,6 @@ template <typename IndexType, typename ValueType>
 void delete_device_matrix(ell_matrix<IndexType,ValueType>& ell){ delete_ell_matrix(ell, DEVICE_MEMORY); }
 
 template <typename IndexType, typename ValueType>
-void delete_device_matrix(btjad_matrix<IndexType,ValueType>& btjad){ delete_btjad_matrix(btjad, DEVICE_MEMORY); }
-
-template <typename IndexType, typename ValueType>
 void delete_device_matrix(csr_matrix<IndexType,ValueType>& csr){ delete_csr_matrix(csr, DEVICE_MEMORY); }
 
 template <class IndexType, class ValueType>
@@ -173,21 +142,6 @@ void delete_device_matrix(hyb_matrix<IndexType,ValueType>& hyb){  delete_hyb_mat
 ////////////////////////////////////////////////////////////////////////////////
 //! copy to device
 ////////////////////////////////////////////////////////////////////////////////
-
-template <typename IndexType, typename ValueType>
-btjad_matrix<IndexType, ValueType> copy_matrix_to_device(const btjad_matrix<IndexType, ValueType>& h_btjad, IndexType BLOCKYDIM)
-{
-    int stride=16;
-    btjad_matrix<IndexType, ValueType> d_btjad = h_btjad; //copy fields
-    IndexType num_brows = (IndexType) ceil((float)h_btjad.num_rows / BLOCKYDIM);
-    d_btjad.value = copy_array_to_device(h_btjad.value, h_btjad.size);
-    d_btjad.row_index = new_device_array(h_btjad.size);
-    memcpy_to_device(d_btjad.row_index, h_btjad.row_index, h_btjad.size);
-    d_btjad.x = copy_array_to_device(h_btjad.x, h_btjad.perm_index[num_brows]);
-    d_btjad.perm_index = copy_array_to_device(h_btjad.perm_index, num_brows+1);
-    d_btjad.jad_diag_start = copy_array_to_device(h_btjad.jad_diag_start,num_brows*stride);
-    return d_btjad;
-}
 
 template <typename IndexType, typename ValueType>
 ell_matrix<IndexType, ValueType> copy_matrix_to_device(const ell_matrix<IndexType, ValueType>& h_ell)
