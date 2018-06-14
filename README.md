@@ -1,7 +1,7 @@
-## SpMM
+## Sparse Matrix Multiple Vector Multiplication using Ellpack storage format (SpMM_ELL)
 Sparse matrix multi vector multiplication
 
-This project was based on CUSP, some code is reused from the ell-spmv available in CUSP.
+This project reusues code from Nvidia's open source CUSP Library.
 
 Related publication available here: 
 http://ieeexplore.ieee.org/abstract/document/7056883/?reload=true
