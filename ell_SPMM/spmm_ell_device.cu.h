@@ -40,7 +40,7 @@ spmm_ell_kernel2(const IndexType num_rows,
     if(row >= num_rows){ return; }
 
     ValueType sum1 = y[row];
-	ValueType sum2 = y[row+num_rows];
+    ValueType sum2 = y[row+num_rows];
 	
     Aj += row;
     Ax += row;
@@ -51,7 +51,7 @@ spmm_ell_kernel2(const IndexType num_rows,
         if (A_ij != 0){
             const IndexType col = *Aj;
             sum1 += A_ij * fetch_x<UseCache>(col, x);
-			sum2 += A_ij * fetch_x<UseCache>(col+num_cols, x);
+            sum2 += A_ij * fetch_x<UseCache>(col+num_cols, x);
         }
 
         Aj += stride;
@@ -59,7 +59,7 @@ spmm_ell_kernel2(const IndexType num_rows,
     }
 
     y[row] = sum1;
-	y[row+num_rows] = sum2;
+    y[row+num_rows] = sum2;
 }
 
 template <typename IndexType, typename ValueType, bool UseCache>
@@ -77,7 +77,7 @@ spmm_ell_kernel4(const IndexType num_rows,
 
     if(row >= num_rows){ return; }
 
-	int temp=row;
+    int temp=row;
     ValueType sum1 = y[row];
     temp += num_rows;
     ValueType sum2 = y[temp];
@@ -86,7 +86,7 @@ spmm_ell_kernel4(const IndexType num_rows,
     temp += num_rows;
     ValueType sum4 = y[temp];
 	
-	Aj += row;
+    Aj += row;
     Ax += row;
 
     for(IndexType n = 0; n < num_cols_per_row; n++){
@@ -94,15 +94,15 @@ spmm_ell_kernel4(const IndexType num_rows,
 
         if (A_ij != 0){
             const IndexType col = *Aj;
-           	temp=col;
+            temp=col;
             sum1 += A_ij * fetch_x<UseCache>(temp, x);
             temp += num_cols;
             sum2 += A_ij * fetch_x<UseCache>(temp, x);
             temp += num_cols;
-			sum3 += A_ij * fetch_x<UseCache>(temp, x);
+            sum3 += A_ij * fetch_x<UseCache>(temp, x);
             temp += num_cols;
-			sum4 += A_ij * fetch_x<UseCache>(temp, x);
-		}
+            sum4 += A_ij * fetch_x<UseCache>(temp, x);
+	}
 
         Aj += stride;
         Ax += stride;
@@ -134,7 +134,7 @@ spmm_ell_kernel8(const IndexType num_rows,
 
     if(row >= num_rows){ return; }
 
-	int temp=row;
+    int temp=row;
     ValueType sum1 = y[row];
     temp += num_rows;
     ValueType sum2 = y[temp];
@@ -142,16 +142,16 @@ spmm_ell_kernel8(const IndexType num_rows,
     ValueType sum3 = y[temp];
     temp += num_rows;
     ValueType sum4 = y[temp];
-	temp += num_rows;
+    temp += num_rows;
     ValueType sum5 = y[temp];
-	temp += num_rows;
+    temp += num_rows;
     ValueType sum6 = y[temp];
-	temp += num_rows;
-	ValueType sum7 = y[temp];
+    temp += num_rows;
+    ValueType sum7 = y[temp];
     temp += num_rows;
     ValueType sum8 = y[temp];
 	
-	Aj += row;
+    Aj += row;
     Ax += row;
 
     for(IndexType n = 0; n < num_cols_per_row; n++){
@@ -159,23 +159,23 @@ spmm_ell_kernel8(const IndexType num_rows,
 
         if (A_ij != 0){
             const IndexType col = *Aj;
-           	temp=col;
+            temp=col;
             sum1 += A_ij * fetch_x<UseCache>(temp, x);
             temp += num_cols;
             sum2 += A_ij * fetch_x<UseCache>(temp, x);
             temp += num_cols;
-			sum3 += A_ij * fetch_x<UseCache>(temp, x);
+            sum3 += A_ij * fetch_x<UseCache>(temp, x);
             temp += num_cols;
-			sum4 += A_ij * fetch_x<UseCache>(temp, x);
-			temp += num_cols;
-			sum5 += A_ij * fetch_x<UseCache>(temp, x);
-			temp += num_cols;
-			sum6 += A_ij * fetch_x<UseCache>(temp, x);
-			temp += num_cols;
-			sum7 += A_ij * fetch_x<UseCache>(temp, x);
+            sum4 += A_ij * fetch_x<UseCache>(temp, x);
             temp += num_cols;
-			sum8 += A_ij * fetch_x<UseCache>(temp, x);
-		}
+            sum5 += A_ij * fetch_x<UseCache>(temp, x);
+            temp += num_cols;
+            sum6 += A_ij * fetch_x<UseCache>(temp, x);
+            temp += num_cols;
+            sum7 += A_ij * fetch_x<UseCache>(temp, x);
+            temp += num_cols;
+            sum8 += A_ij * fetch_x<UseCache>(temp, x);
+	}
 
         Aj += stride;
         Ax += stride;
@@ -189,11 +189,11 @@ spmm_ell_kernel8(const IndexType num_rows,
     y[temp] = sum3;
     temp += num_rows;
     y[temp] =sum4;
-	temp += num_rows;
+    temp += num_rows;
     y[temp] =sum5;
-	temp += num_rows;
+    temp += num_rows;
     y[temp] =sum6;
-	temp += num_rows;
+    temp += num_rows;
     y[temp] = sum7;
     temp += num_rows;
     y[temp] =sum8;
@@ -217,7 +217,7 @@ spmm_ell_kernel16(const IndexType num_rows,
 
     if(row >= num_rows){ return; }
 
-	int temp=row;
+    int temp=row;
     ValueType sum1 = y[row];
     temp += num_rows;
     ValueType sum2 = y[temp];
@@ -225,33 +225,33 @@ spmm_ell_kernel16(const IndexType num_rows,
     ValueType sum3 = y[temp];
     temp += num_rows;
     ValueType sum4 = y[temp];
-	temp += num_rows;
+    temp += num_rows;
     ValueType sum5 = y[temp];
-	temp += num_rows;
+    temp += num_rows;
     ValueType sum6 = y[temp];
-	temp += num_rows;
-	ValueType sum7 = y[temp];
+    temp += num_rows;
+    ValueType sum7 = y[temp];
     temp += num_rows;
     ValueType sum8 = y[temp];
-	temp += num_rows;
+    temp += num_rows;
     ValueType sum9 = y[temp];
     temp += num_rows;
     ValueType sum10 = y[temp];
-	temp += num_rows;
-	ValueType sum11 = y[temp];
+    temp += num_rows;
+    ValueType sum11 = y[temp];
     temp += num_rows;
     ValueType sum12 = y[temp];
     temp += num_rows;
     ValueType sum13 = y[temp];
     temp += num_rows;
     ValueType sum14 = y[temp];
-	temp += num_rows;
+    temp += num_rows;
     ValueType sum15 = y[temp];
-	temp += num_rows;
+    temp += num_rows;
     ValueType sum16 = y[temp];
 	
 	
-	Aj += row;
+    Aj += row;
     Ax += row;
 
     for(IndexType n = 0; n < num_cols_per_row; n++){
@@ -259,39 +259,39 @@ spmm_ell_kernel16(const IndexType num_rows,
 
         if (A_ij != 0){
             const IndexType col = *Aj;
-           	temp=col;
+            temp=col;
             sum1 += A_ij * fetch_x<UseCache>(temp, x);
             temp += num_cols;
             sum2 += A_ij * fetch_x<UseCache>(temp, x);
             temp += num_cols;
-			sum3 += A_ij * fetch_x<UseCache>(temp, x);
+            sum3 += A_ij * fetch_x<UseCache>(temp, x);
             temp += num_cols;
-			sum4 += A_ij * fetch_x<UseCache>(temp, x);
-			temp += num_cols;
-			sum5 += A_ij * fetch_x<UseCache>(temp, x);
-			temp += num_cols;
-			sum6 += A_ij * fetch_x<UseCache>(temp, x);
-			temp += num_cols;
-			sum7 += A_ij * fetch_x<UseCache>(temp, x);
+            sum4 += A_ij * fetch_x<UseCache>(temp, x);
             temp += num_cols;
-			sum8 += A_ij * fetch_x<UseCache>(temp, x);
-			temp += num_cols;
-			sum9 += A_ij * fetch_x<UseCache>(temp, x);
+            sum5 += A_ij * fetch_x<UseCache>(temp, x);
             temp += num_cols;
-			sum10 += A_ij * fetch_x<UseCache>(temp, x);	
-			temp += num_cols;
-			sum11 += A_ij * fetch_x<UseCache>(temp, x);
+            sum6 += A_ij * fetch_x<UseCache>(temp, x);
+            temp += num_cols;
+            sum7 += A_ij * fetch_x<UseCache>(temp, x);
+            temp += num_cols;
+            sum8 += A_ij * fetch_x<UseCache>(temp, x);
+            temp += num_cols;
+            sum9 += A_ij * fetch_x<UseCache>(temp, x);
+            temp += num_cols;
+            sum10 += A_ij * fetch_x<UseCache>(temp, x);	
+            temp += num_cols;
+            sum11 += A_ij * fetch_x<UseCache>(temp, x);
             temp += num_cols;
             sum12 += A_ij * fetch_x<UseCache>(temp, x);
             temp += num_cols;
-			sum13 += A_ij * fetch_x<UseCache>(temp, x);
+            sum13 += A_ij * fetch_x<UseCache>(temp, x);
             temp += num_cols;
-			sum14 += A_ij * fetch_x<UseCache>(temp, x);
-			temp += num_cols;
-			sum15 += A_ij * fetch_x<UseCache>(temp, x);
-			temp += num_cols;
-			sum16 += A_ij * fetch_x<UseCache>(temp, x);
-		}
+            sum14 += A_ij * fetch_x<UseCache>(temp, x);
+            temp += num_cols;
+            sum15 += A_ij * fetch_x<UseCache>(temp, x);
+            temp += num_cols;
+            sum16 += A_ij * fetch_x<UseCache>(temp, x);
+	}
 
         Aj += stride;
         Ax += stride;
@@ -305,29 +305,29 @@ spmm_ell_kernel16(const IndexType num_rows,
     y[temp] = sum3;
     temp += num_rows;
     y[temp] =sum4;
-	temp += num_rows;
+    temp += num_rows;
     y[temp] =sum5;
-	temp += num_rows;
+    temp += num_rows;
     y[temp] =sum6;
-	temp += num_rows;
+    temp += num_rows;
     y[temp] = sum7;
     temp += num_rows;
     y[temp] =sum8;
-	temp += num_rows;
+    temp += num_rows;
     y[temp] = sum9;
     temp += num_rows;
     y[temp] =sum10;
-	temp += num_rows;
-	y[temp] = sum11;
+    temp += num_rows;
+    y[temp] = sum11;
     temp += num_rows;
     y[temp] = sum12;
     temp += num_rows;
     y[temp] = sum13;
     temp += num_rows;
     y[temp] =sum14;
-	temp += num_rows;
+    temp += num_rows;
     y[temp] =sum15;
-	temp += num_rows;
+    temp += num_rows;
     y[temp] =sum16;
 
 }
